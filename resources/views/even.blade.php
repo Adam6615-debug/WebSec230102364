@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Prime Numbers')
+@section('title', 'even Numbers')
 @section('content')
 
 <div class="card">
