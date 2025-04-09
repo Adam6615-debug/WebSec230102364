@@ -60,6 +60,7 @@ return [
     */
 
     'providers' => [
+<<<<<<< HEAD
     'users' => [
         'driver' => 'eloquent',
         'model' => App\Models\User::class, 
@@ -67,11 +68,21 @@ return [
 ],
 
 
+=======
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+>>>>>>> 80ae6ee (after midterm disccusion)
 
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+<<<<<<< HEAD
+=======
+    ],
+>>>>>>> 80ae6ee (after midterm disccusion)
 
     /*
     |--------------------------------------------------------------------------
