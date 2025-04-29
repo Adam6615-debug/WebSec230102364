@@ -68,3 +68,6 @@ Route::get('verify', [UsersController::class, 'verify'])->name('verify');
 
 Route::get('auth/facebook', [UsersController::class, 'redirectToFacebook'])->name('redirectToFacebook');
 Route::get('auth/facebook/callback', [UsersController::class, 'handleFacebookCallback'])->name('handleFacebookCallback');
+
+Route::get('auth/github', [UsersController::class, 'redirectToGitHub'])->name('redirectToGitHub');
+Route::get('auth/github/callback', [UsersController::class, 'handleGitHubCallback'])->name('handleGitHubCallback');

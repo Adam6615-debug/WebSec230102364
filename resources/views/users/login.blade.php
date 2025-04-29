@@ -30,6 +30,9 @@
       <a href="{{ route('redirectToFacebook') }}" class="btn btn-success">
       Login with Facebook
       </a>
+      <a href="{{ route('redirectToGitHub') }}" class="btn btn-dark">
+      Login with GitHub
+      </a>
 
     </form>
     </div>
