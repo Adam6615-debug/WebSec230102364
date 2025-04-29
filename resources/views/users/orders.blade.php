@@ -3,48 +3,52 @@
 @section('title', 'Orders')
 
 @section('content')
-<div class="row mt-2">
-  <div class="col col-10">
-    <h1>Orders</h1>
+<div class="row justify-content-between align-items-center mt-4 mb-3">
+  <div class="col-md-6">
+    <h2 class="fw-bold">Orders</h2>
   </div>
 </div>
 
 <form>
-  <div class="row">
-    <div class="col col-sm-2">
+  <div class="row g-2 mb-3">
+    <div class="col-sm-3">
       <input name="keywords" type="text" class="form-control" placeholder="Search Orders" value="{{ request()->keywords }}" />
     </div>
-    <div class="col col-sm-1">
-      <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-sm btn-primary">Search</button>
     </div>
-    <div class="col col-sm-1">
-      <a href="{{ route('orders') }}" class="btn btn-danger">Reset</a>
+    <div class="col-auto">
+      <a href="{{ route('orders') }}" class="btn btn-sm btn-danger">Reset</a>
     </div>
   </div>
 </form>
 
-<div class="card mt-2">
+<div class="card shadow-sm">
   <div class="card-body">
-    <table class="table">
-      <thead>
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
         <tr>
-          <th scope="col">Order ID</th>
-          <th scope="col">Product Name</th>
-          <th scope="col">Quantity</th>
-          <th scope="col">Total</th>
-          <th scope="col">Created At</th>
+          <th>Order ID</th>
+          <th>Product Name</th>
+          <th>Quantity</th>
+          <th>Total</th>
+          <th>Created At</th>
         </tr>
       </thead>
       <tbody>
-        @foreach($orders as $order)
+        @forelse($orders as $order)
         <tr>
-          <td scope="col">{{ $order->id }}</td>
-          <td scope="col">{{ $order->product->name }}</td> <!-- Assuming the product has a 'name' field -->
-          <td scope="col">{{ $order->quantity }}</td>
-          <td scope="col">{{ $order->total }}</td>
-          <td scope="col">{{ $order->created_at }}</td>
+          <td>{{ $order->id }}</td>
+          <td>{{ $order->product->name }}</td>
+          <td>{{ $order->quantity }}</td>
+          <td>${{ number_format($order->total, 2) }}</td>
+          <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
         </tr>
-        @endforeach
+        @empty
+        <tr>
+          <td colspan="5" class="text-center text-muted">No orders found.</td>
+        </tr>
+        @endforelse
       </tbody>
     </table>
   </div>

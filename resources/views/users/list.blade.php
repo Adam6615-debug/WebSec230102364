@@ -3,9 +3,9 @@
 @section('title', 'Users')
 
 @section('content')
-<div class="row mt-2">
-  <div class="col col-10">
-    <h1>Users</h1>
+<div class="row mt-3 mb-2">
+  <div class="col-md-8">
+    <h2 class="fw-bold">Users</h2>
   </div>
 </div>
 
@@ -16,113 +16,116 @@
 <div class="alert alert-info">You are viewing customers only (Employee).</div>
 @endif
 
-<form>
-  <div class="row">
-    <div class="col col-sm-2">
+<form class="mb-3">
+  <div class="row g-2">
+    <div class="col-md-3">
       <input name="keywords" type="text" class="form-control" placeholder="Search Keywords" value="{{ request()->keywords }}" />
     </div>
-    <div class="col col-sm-1">
-      <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="col-md-auto">
+      <button type="submit" class="btn btn-primary w-100">Search</button>
     </div>
-    <div class="col col-sm-1">
-      <a href="{{ route('users') }}" class="btn btn-danger">Reset</a>
+    <div class="col-md-auto">
+      <a href="{{ route('users') }}" class="btn btn-danger w-100">Reset</a>
+    </div>
+    <div class="col-md-auto">
+      <a href="{{ route('addemployee') }}" class="btn btn-success w-100">Add Employee</a>
     </div>
   </div>
 </form>
 
-<div class="card mt-2">
+<div class="card">
   <div class="card-body">
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Name</th>
-          <th scope="col">Email</th>
-          <th scope="col">Credit</th>
-          <th scope="col">Roles</th>
-          <th scope="col">Status</th>
-
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Credit</th>
+            <th>Roles</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
         @foreach($users as $user)
-        <tr>
-          <td scope="col">{{ $user->id }}</td>
-          <td scope="col">{{ $user->name }}</td>
-          <td scope="col">{{ $user->email }}</td>
-          <td scope="col">{{ $user->credit }}</td>
-          <td scope="col">
-            @foreach($user->roles as $role)
-            <span class="badge bg-primary">{{ $role->name }}</span>
-            @endforeach
-          </td>
-          <td scope="col">{{ $user->blocked_status }}</td>
-          <td scope="col">
-            @can('edit_users')
-            <a class="btn btn-primary" href='{{ route('users_edit', [$user->id]) }}'>Edit</a>
-            @endcan
+          <tr>
+            <td>{{ $user->id }}</td>
+            <td>{{ $user->name }}</td>
+            <td>{{ $user->email }}</td>
+            <td>${{ $user->credit }}</td>
+            <td>
+              @foreach($user->roles as $role)
+              <span class="badge bg-primary">{{ $role->name }}</span>
+              @endforeach
+            </td>
+            <td>{{ $user->blocked_status }}</td>
+            <td>
+              <div class="d-flex flex-wrap gap-1">
+                @can('edit_users')
+                <a class="btn btn-sm btn-primary" href="{{ route('users_edit', [$user->id]) }}">Edit</a>
+                @endcan
 
-            @can('admin_users')
-            <a class="btn btn-primary" href='{{ route('edit_password', [$user->id]) }}'>Change Password</a>
-            @endcan
-            
-            @can('delete_users')
-            <a class="btn btn-danger" href='{{ route('users_delete', [$user->id]) }}'>Delete</a>
-            @endcan
-            @canany(['admin_users', 'edit_users'])
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCreditModal{{ $user->id }}">
-              Add Credit
-            </button>
+                @can('admin_users')
+                <a class="btn btn-sm btn-secondary" href="{{ route('edit_password', [$user->id]) }}">Password</a>
+                @endcan
 
-            <div class="modal fade" id="addCreditModal{{ $user->id }}" tabindex="-1" aria-labelledby="addCreditModalLabel{{ $user->id }}" aria-hidden="true">
-              <div class="modal-dialog">
-                <form method="POST" action="{{ route('users_add_credit', $user->id) }}">
-                  @csrf
-                  <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" id="addCreditModalLabel{{ $user->id }}">Add Credit for {{ $user->name }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-        <input type="number" name="credit" min="0" class="form-control" placeholder="Enter credit amount" required oninput="checkNegative(this)" id="creditInput{{ $user->id }}" />
-        <small id="creditError{{ $user->id }}" class="form-text text-danger" style="display: none;">Credit cannot be a negative value.</small>
-    </div>
-    <div class="modal-footer">
-        <button type="submit" class="btn btn-primary" id="addCreditButton{{ $user->id }}" style="transition: all 0.3s ease;">Add Credit</button>
-    </div>
-</div>
+                @can('delete_users')
+                <a class="btn btn-sm btn-danger" href="{{ route('users_delete', [$user->id]) }}">Delete</a>
+                @endcan
+
+                @canany(['admin_users', 'edit_users'])
+                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addCreditModal{{ $user->id }}">
+                  + Credit
+                </button>
+                @endcanany
               </div>
-              </form>
-            </div>
-  </div>
-  @endcanany
 
-  </td>
-  </tr>
-  @endforeach
-  </tbody>
-  </table>
+              {{-- Modal --}}
+              <div class="modal fade" id="addCreditModal{{ $user->id }}" tabindex="-1" aria-labelledby="addCreditModalLabel{{ $user->id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                  <form method="POST" action="{{ route('users_add_credit', $user->id) }}">
+                    @csrf
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Add Credit for {{ $user->name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <input type="number" name="credit" min="0" class="form-control" placeholder="Enter credit amount" required oninput="checkNegative(this)" id="creditInput{{ $user->id }}" />
+                        <small id="creditError{{ $user->id }}" class="form-text text-danger" style="display: none;">Credit cannot be negative.</small>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="addCreditButton{{ $user->id }}">Add Credit</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              {{-- End Modal --}}
+            </td>
+          </tr>
+        @endforeach
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
-</div>
+
 <script>
 function checkNegative(input) {
-    const userId = input.id.split('creditInput')[1];  // Extract user ID from input ID
-    const errorMessage = document.getElementById('creditError' + userId);
-    const addButton = document.getElementById('addCreditButton' + userId);
-    
-    if (input.value < 0) {
-        errorMessage.style.display = 'block';  // Show the error message
-        addButton.classList.remove('btn-sm');  // Reset to normal button size
-    } else {
-        errorMessage.style.display = 'none';  // Hide the error message
-        if (input.value > 0) {
-            addButton.classList.add('btn-sm');  // Add small button class
-        } else {
-            addButton.classList.remove('btn-sm');  // Remove small button class if empty or invalid
-        }
-    }
+  const userId = input.id.split('creditInput')[1];
+  const errorMessage = document.getElementById('creditError' + userId);
+  const addButton = document.getElementById('addCreditButton' + userId);
+
+  if (input.value < 0) {
+    errorMessage.style.display = 'block';
+    addButton.disabled = true;
+  } else {
+    errorMessage.style.display = 'none';
+    addButton.disabled = false;
+  }
 }
 </script>
 

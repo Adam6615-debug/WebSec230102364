@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use App\Mail\VerificationEmail;
 use Artisan;
 use Laravel\Socialite\Facades\Socialite;
-
 use App\Http\Controllers\Controller;
 use App\Models\User;
 
@@ -313,23 +312,7 @@ class UsersController extends Controller
             );
             Auth::login($user)  ;
     }
-    public function redirectToGitHub()
-{
-    return Socialite::driver('github')->stateless()->redirect();
-}
-
-public function handleGitHubCallback()
-{
-    $githubUser = Socialite::driver('github')->stateless()->user();
-
-    $user = \App\Models\User::firstOrCreate(
-        ['email' => $githubUser->getEmail()],
-        ['name' => $githubUser->getName() ?? $githubUser->getNickname()]
-    );
-
-    Auth::login($user);
-    return redirect('/');
-}
+    
 
 
 
