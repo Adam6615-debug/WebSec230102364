@@ -24,8 +24,11 @@
       <div class="form-group mb-2">
         <button type="submit" class="btn btn-primary">Login</button>
       </div>
-      <a href="{{ route('google.login') }}" class="btn btn-danger">
+      <a href="{{ route('google.login') }}" class="btn btn-success">
       Login with Google
+      </a>
+      <a href="{{ route('redirectToFacebook') }}" class="btn btn-success">
+      Login with Facebook
       </a>
 
     </form>

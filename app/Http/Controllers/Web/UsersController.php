@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use App\Mail\VerificationEmail;
 use Artisan;
+use Laravel\Socialite\Facades\Socialite;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -295,4 +296,29 @@ class UsersController extends Controller
     {
         return view('users.addemployee'); // You can change this to any view you want to render
     }
+    public function redirectToFacebook()
+    {
+    return Socialite::driver('facebook')->stateless()->redirect();
+    }
+
+    public function handleFacebookCallback()
+    {
+        $userfacebook = Socialite::driver('facebook')->stateless()->user();
+
+
+        $user = User::firstOrCreate(
+            ['facebook_id' => $userfacebook->getId()],
+        ['facebook_name' => $userfacebook->getName(),
+                'facebook_email' => $userfacebook->getEmail(),]
+            );
+            Auth::login($user)  ;
+    }
+
+
+
+
+
+
+
 }
+
