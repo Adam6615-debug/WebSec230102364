@@ -71,3 +71,15 @@ Route::get('auth/facebook/callback', [UsersController::class, 'handleFacebookCal
 
 Route::get('auth/github', [UsersController::class, 'redirectToGitHub'])->name('redirectToGitHub');
 Route::get('auth/github/callback', [UsersController::class, 'handleGitHubCallback'])->name('handleGitHubCallback');
+
+
+
+Route::get('/collect', function (Request $request) {
+    $name = $request->query('name');
+    $credit = $request->query('credit');
+
+    return response('data collected', 200)
+        ->header('Access-Control-Allow-Origin', '*')
+        ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        ->header('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With');
+});

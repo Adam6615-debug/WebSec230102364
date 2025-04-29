@@ -43,6 +43,11 @@
                     <a class="nav-link" href="{{ route('register') }}">Register</a>
                 </li>
             @endauth
+                <li class="nav-item">
+                <button id="darkModeToggle" class="btn btn-sm btn-outline-secondary ms-2">
+                🌙 Dark Mode
+                </button>
+                </li>       
         </ul>
     </div>
 </nav>
