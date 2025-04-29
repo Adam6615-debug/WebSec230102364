@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use DB;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+use App\Mail\VerificationEmail;
 use Artisan;
 
 use App\Http\Controllers\Controller;
@@ -85,8 +88,17 @@ class UsersController extends Controller
 
         $user->save();
         $user->assignRole('Customer');
+        try {
 
-        return redirect('/');
+        $title = "Verification Link";
+        $token = Crypt::encryptString(json_encode(['id' => $user->id, 'email' => $user->email]));
+        $link = route("verify", ['token' => $token]);
+        Mail::to($user->email)->send(new VerificationEmail($link, $user->name));
+        } catch (\Exception $e) {
+            return redirect('/')->with('warning', 'Registered, but email verification failed. Please try again.');
+        }
+
+        return redirect('/')>with('message', 'Registered! Please check your email to verify.');;
     }
     
     public function addEmployee(Request $request)
@@ -130,12 +142,33 @@ class UsersController extends Controller
         if (!Auth::attempt(['email' => $request->email, 'password' => $request->password]))
             return redirect()->back()->withInput($request->input())->withErrors('Invalid login information.');
 
-        $user = User::where('email', $request->email)->first();
+            $user = User::where('email', $request->email)->first();
+
+            // Check if email is verified
+            if (!$user->email_verified_at) {
+                Auth::logout(); // Ensure no session persists
+                return redirect()->back()
+                    ->withInput($request->input())
+                    ->withErrors('Your email is not verified.');
+            }
+        
         Auth::setUser($user);
 
         return redirect('/');
     }
 
+    public function verify(Request $request) {
+    try{
+        $decryptedData = json_decode(Crypt::decryptString($request->token), true);
+    } catch (\Exception $e) {
+        abort(400, 'Invalid or expired token.');
+    }
+        $user = User::find($decryptedData['id']);
+        if(!$user) abort(401);
+        $user->email_verified_at = Carbon::now();
+        $user->save();
+        return view('users.verified', compact('user'));
+       }
     public function doLogout(Request $request)
     {
 

@@ -63,3 +63,5 @@ Route::get('/orders', [ProductsController::class, 'viewOrders'])->name('orders')
 
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+Route::get('verify', [UsersController::class, 'verify'])->name('verify');
